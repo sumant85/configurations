@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#remove trailing whitespaces
+git diff --cached --name-status | while read st file; do
+  if [ $st == 'D' ]; then continue; fi
+  if [[ $file == sdk/* ]]; then touch $runIosTest; fi 
+  if [[ $file == *.js || $file == *.jsx || $file == *.sql || $file == *.java || $file == *.html || $file == *.m || $file == *.py || $file == *.h || $file == *.css || $file == *.thrift || $file == *.scss || $file == *.sh || $file == *.cpp || $file == *.R ]]; then
+     sed -i "" -E "s/[[:space:]]*$//" "$file";
+  fi
+  grep 'FIXME' "$file" && echo "FIXMEs in file $file" && exit 1 
+  git add "$file"
+done
+# check if previous sub-shell did an exit 1
+if [[ $? -eq 1 ]]; then exit 1; fi
+
+echo "As you test so shall you rest!!"
